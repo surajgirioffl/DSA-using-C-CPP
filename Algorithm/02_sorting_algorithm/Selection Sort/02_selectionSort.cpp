@@ -68,14 +68,14 @@ void selectionSort::algorithm1()
         if (i != minimum) // it's (only if statement) not compulsory. But O(1) (in case of array[i] is smallest) is better than O(4).
         {
             /*It's working*/
-            int temp = array[i];
-            array[i] = array[minimum];
-            array[minimum] = temp;
+            // int temp = array[i];
+            // array[i] = array[minimum];
+            // array[minimum] = temp;
 
-            /*It's not working. ?*/
-            // int temp = array[minimum];
-            // array[minimum] = array[i];
-            // array[i] == temp;
+            /*we can use the below code also. Both working*/
+            int temp = array[minimum];
+            array[minimum] = array[i];
+            array[i] = temp;
         }
     }
 }
