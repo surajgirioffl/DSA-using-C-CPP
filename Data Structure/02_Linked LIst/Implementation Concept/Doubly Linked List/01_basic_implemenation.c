@@ -1,39 +1,194 @@
 ﻿/*Implemenation of concept of doubly linked list using c*/
 
 /*
- *operations
- *insert in empty list
- *insert at beginning of list
- *insertion at end of list
- *insertion in between the node
- *same as above in delete
- *display all from beginning of list
- *display all from end of list
- *display from particular node
- *display only particular node
+ **operations
+ **1. Insertion
+ *insertion at end
+ *insertion at beginning
+ *insertion before particular node number
+ *insertion after particular node number
+ *insertion at particular node number
+ *
+ **2. Deletion
+ *deletion at end
+ *deletion at beginning
+ *deletion of particular node number
+ *
+ **3. Display
+ *display from beginning
+ *reverse the list and display from beginning
+ *
+ **4.
+ *Transversal in linked list and modification of data if required
+ *
+ **5. Searching for data
+ *linear search to find a particular data
  */
 
 /*
  *author: Suraj Kumar Giri.
- *Date: 12-02-2022
- *Time: 11:04:49
+ *Date: 31-03-2022
+ *Time: 00:16:54
  */
 #include <stdio.h>
 #include <stdlib.h>
+typedef struct labor labor; // making simple data type 'labor' instead of 'struct labor'
 struct labor
 {
-    struct labor *prv; // for pointing on previous node of current node
+    labor *prv; // for pointing on previous node of current node
     char name[30];
-    int wage;           // for wage of labor
-    struct labor *next; // for pointing on next node of current node
-} * start;              // taking start as global variable. So, don't need to pass to every function.
+    int wage;    // for wage of labor
+    labor *next; // for pointing on next node of current node
+} * start;       // taking start as global variable. So, don't need to pass to every function.
+labor *top;      // taking top as global pointer variable for storing the address pointing at top
+/*
+ *we will use two variable 'top' and 'start' to perform all operations.
+ *top will remains fixed at first node.
+ *start will change it place as operations performed in list
+ */
 
-typedef struct labor labor; // making simple data type 'labor' instead of 'struct labor'
-labor *top;                 // taking top global pointer variable for storing the address pointing at top
+/*functions */
+/*----------------------------------------------------------------*/
 
 labor *createNode();
+int totalNodeInList();
+int currentPositionOfStart();
 
-/*functions*/
+void insertionOperationMenu(); // menu
+void insertNodeAtEnd();
+void insertAtBeginning();
+void insertAtDesiredPosition();
+void insertBeforeDesiredPosition(position);
+void insertAfterDesiredPosition(position);
+
+void deletionOperationMenu(); // menu
+void deleteNodeAtEnd();
+void deleteAtBeginning();
+void deleteAtDesiredPosition();
+
+void displayFromBeginning();
+
+/*-----------definition of functions started---------------*/
+int main()
+{
+    int choice;
+    system("cls");
+    do
+    {
+        puts("Press 1 for insertion of new node.");
+        puts("Press 2 for deletion of existing node.");
+        puts("Press 3 for display the linked list.");
+        puts("Press 4 for search data in linked list.");
+        puts("Press 9 to clear the display.");
+        puts("Press 10 to exit");
+        scanf("%d", &choice);
+        fflush(stdin);
+        switch (choice)
+        {
+        case 1:
+            insertionOperationMenu();
+            break;
+
+        case 2:
+            deletionOperationMenu();
+            break;
+
+        case 3:
+            displayMenu();
+            break;
+        case 4:
+            searchDataMenu();
+            break;
+        case 9:
+            system("cls");
+            break;
+
+            // default:
+            //     puts("wrong choice");
+            //     break;
+        }
+    } while (choice != 10);
+}
+
+/*------------------INSERTION OPERATIONS-----------------------*/
+/*main menu function of insertion Operation in linked list*/
+void insertionOperationMenu()
+{
+    puts("Press 1 for insert node in beginning of linked list.");
+    puts("Press 2 for insert node in end of linked list.");
+    puts("Press 3 for insert node at/before/after desired node number of linked list.");
+    int choice;
+
+    switch (choice)
+    {
+    case 1:
+        insertAtBeginning();
+        break;
+    case 2:
+        insertNodeAtEnd();
+        break;
+    case 3:
+        insertAtDesiredPosition();
+        break;
+    default:
+        puts("wrong choice.");
+        break;
+    }
+}
+
+/*To insert at end of list*/
+void insertNodeAtEnd()
+{
+    labor *newNode = createNode();
+
+    /*
+     *we have to check condition if linked list is existing or not
+     *start will contains the details of last inserted node
+     *if no node existing then start contains NULL.
+     *top will also be NULL if no node existing.
+     */
+
+    if (top == NULL)
+    {
+        start = newNode;
+        top = newNode; // now top will point to first node
+    }
+    else
+    {
+        while (start->next != NULL)
+            start = start->next;
+        // after the 'while' loop 'start' will point to last node
+        // now linking newnode with last node of linked list
+        start->next = newNode;
+        newNode->prv = start;
+        start = newNode; // now start will point to last created node
+    }
+    puts("Insertion in end of linked list successful.............\n");
+}
+
+/*to insert node at beginning of list */
+void insertAtBeginning()
+{
+    labor *newNode = createNode();
+    if (top == NULL)
+    {
+        puts("Linked list doesn't exist.\nSo, we are creating it.");
+        top = newNode;
+        start = newNode;
+    }
+    else
+    {
+        start = top;
+        /*now inserting before 'start'.*/
+        start->prv = newNode;
+        newNode->next = start;
+        top = newNode; // now newNode become 1st node
+    }
+
+    puts("Insertion at beginning of list successful...............\n");
+}
+
+/*to insert node at desired position*/
 void insertAtDesiredPosition()
 {
     int position; // take node number position from user
@@ -43,29 +198,180 @@ void insertAtDesiredPosition()
     printf("Press 1 for to insert before desired position number or node number %d.", position);
     printf("Press 2 for to insert after desired position number or node number %d.", position);
     printf("Press 3 for to insert at desired position number or node number %d.", position);
+    int choice;
+    scanf("%d", &choice);
 
-    labor *temp = start;
-    switch (position)
+    int totalNodes = totalNodeInList();
+
+    if (choice == 3 && totalNodes == 0 && position == 1) // means linked list doesn't exist and user want insert a node at position 1. Means we will create a linked list.
+        insertAtBeginning();
+    else if (position > totalNodes || position < 1)
     {
-        /* for insert before desired position*/
+        puts("Invalid node number entered.\n");
+        return;
+    }
+    else
+    {
+        switch (choice)
+        {
+            /* for insert before desired position*/
+        case 1:
+            insertBeforeDesiredPosition(position);
+            break;
+
+            /*for insert after desired position */
+        case 2:
+            insertAfterDesiredPosition(position);
+            break;
+
+            /*for insert at desired position*/
+        case 3:
+            insertBeforeDesiredPosition(position);
+            // because if user want to insert at position 4 then we insert before it and that will become position 4
+            break;
+
+        default:
+            puts("Wrong Choice Selected.");
+            break;
+        }
+    }
+}
+
+/*to insert a node before desired position*/
+void insertBeforeDesiredPosition(int position)
+{
+    int positionOfStart = currentPositionOfStart();
+    labor *newNode = createNode();
+    // if (positionOfStart == position)
+    // {
+    // }
+    // else
+    /*above is not required. we will write code of linking only once*/
+    if (positionOfStart < position)
+    {
+        while (start->next != NULL)
+        {
+            start = start->next;
+            if (++positionOfStart == position)
+                break;
+        }
+    }
+    else //(positionOfStart > position)
+    {
+        while (start->prv != NULL)
+        {
+            start = start->prv;
+            if (--positionOfStart == position)
+                break;
+        }
+    }
+
+    /*after these if-else, position of start will be at user's desired position*/
+    // linking
+    start->prv->next = newNode;
+    newNode->prv = start->prv;
+    start->prv = newNode;
+    newNode->next = start;
+}
+
+/*to insert after desired position*/
+void insertAfterDesiredPosition(int position)
+{
+    int positionOfStart = currentPositionOfStart();
+    labor *newNode = createNode();
+    -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+}
+
+/*----------------OTHER USED FUNCTIONS--------------------*/
+/* To create a newNode. Retuns the base address of created newNode. Returns NULL if memory will not allocated*/
+labor *createNode()
+{
+    labor *newNode = (labor *)malloc(sizeof(labor)); // creating a new node at random address
+    if (newNode != NULL)
+    {
+        newNode->prv = NULL;
+        newNode->next = NULL;
+        // taking data from user to store in data part of node
+        puts("write name of labor:");
+        gets(newNode->name);
+        printf("write wage of %s.\n", newNode->name);
+        scanf("%d", &newNode->wage);
+        fflush(stdin);
+    }
+    return newNode; // returning the base address of created node
+}
+
+/*returns total number of nodes in list.*/
+int totalNodeInList()
+{
+    start = top; // now start will point to the 1st node
+    if (start == NULL)
+        return 0; // if linked list doesn't exist.
+    int counter = 1;
+    while (start->next != NULL)
+    {
+        start = start->next;
+        counter++;
+    }
+    return counter;
+}
+
+/*returns the current position(node number) of 'start' in list */
+int currentPositionOfStart()
+{
+    int counter = 1;
+    labor *temp = top; // tmp will point to the 1st node
+    while (1)
+    {
+        if (temp == start)
+            return counter;
+        temp = temp->next;
+        counter++;
+    }
+}
+
+/*----------------------Deletion Operation------------------------------*/
+/*main menu function of deletion Operation in linked list*/
+void deletionOperationMenu()
+{
+    puts("Press 1 for delete node in beginning of linked list.");
+    puts("Press 2 for delete node in end of linked list.");
+    puts("Press 3 for delete node at/before/after desired node number of linked list.");
+    int choice;
+
+    switch (choice)
+    {
     case 1:
-    
+        deleteAtBeginning();
         break;
-
-        /*for insert after desired position */
     case 2:
+        deleteNodeAtEnd();
         break;
-
-        /*for insert at desired position*/
     case 3:
+        deleteAtDesiredPosition();
         break;
-
     default:
-        puts("Wrong Choice Selected.");
+        puts("wrong choice.");
         break;
     }
 }
 
+/*to delete node from end of linked list*/
+void deleteNodeAtEnd()
+{
+}
+
+/*to delete node from beginning of linked list*/
+void deleteAtBeginning()
+{
+}
+
+/*to delete node at user's desired position*/
+void deleteAtDesiredPosition()
+{
+}
+
+/*----------------DISPLAY OPERATIONS--------------------*/
 /*To display the existing from the beginning of the list*/
 void displayFromBeginning()
 {
@@ -84,84 +390,5 @@ void displayFromBeginning()
             temp = temp->next;
         }
         printf("\n");
-    }
-}
-
-/*To insert a node in continuous manner*/
-void insertNodeAtEnd()
-{
-    labor *newNode = createNode();
-
-    /*
-     *we have to check condition if linked list is existing or not
-     * start will contains the details of last inserted node
-     *if no node existing then start contains NULL.
-     */
-
-    if (start == NULL)
-    {
-        start = newNode;
-        top = newNode; // now top will point to first node
-    }
-    else
-    {
-        labor *temp = start;
-        while (temp->next != NULL)
-            temp = temp->next;
-        // after the 'while' loop tmp will point to last node
-        // now linking newnode with last node of linked list
-        temp->next = newNode;
-        newNode->prv = temp;
-        start = newNode; // now start will point to last created node
-    }
-}
-
-/* To create a newNode. Retuns the base address of created newNode. Retuns NULL if memory will not allocated*/
-labor *createNode()
-{
-    labor *newNode = (labor *)malloc(sizeof(labor)); // creating a new node at random address
-    if (newNode != NULL)
-    {
-        newNode->prv = NULL;
-        newNode->next = NULL;
-        // taking data from user to store in data part of node
-        puts("write name of labor:");
-        gets(newNode->name);
-        printf("write wage of %s.\n", newNode->name);
-        scanf("%d", &newNode->wage);
-        fflush(stdin);
-    }
-    return newNode; // returning the base address of created node
-}
-
-/*-----------definition of functions started---------------*/
-int main()
-{
-    int choice;
-    system("cls");
-    while (1)
-    {
-        puts("Press 1 to insert a new node.");
-        puts("Press 2 to display the nodes from beginning of linked list:");
-        puts("Press 3 to exit");
-        scanf("%d", &choice);
-        fflush(stdin);
-        switch (choice)
-        {
-        case 1:
-            insertNodeAtEnd();
-            break;
-
-        case 2:
-            displayFromBeginning();
-            break;
-
-        case 3:
-            exit(1);
-
-        default:
-            puts("wrong choice");
-            break;
-        }
     }
 }
