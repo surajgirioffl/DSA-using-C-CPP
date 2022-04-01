@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-3
+
 void mergeSort(int *array1, int *array2, int *mergedArray, int size1, int size2)
 {
     int i = 0; // for iteration of sorted array1
@@ -24,9 +24,9 @@ void mergeSort(int *array1, int *array2, int *mergedArray, int size1, int size2)
      *if above loop terminates due to fail of any one condition, then
      *it means one array have less size than another
      * so we put left elements in the mergedArray because they will already sorted
-     * 
+     *
      * if both condition satisfied at same time in above loop, it means size of both array are same.
-     * so, the condition of both loop will be not satisfied. 
+     * so, the condition of both loop will be not satisfied.
      */
 
     while (i < size1)
