@@ -13,7 +13,7 @@
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
-            "externalConsole": false,
+            "externalConsole": true, //set to true because interal console is not working
             "MIMode": "gdb",
             "miDebuggerPath": "C:\\My Application\\VS Code\\MinGw\\MinGW\\bin\\gdb.exe",
             "setupCommands": [
