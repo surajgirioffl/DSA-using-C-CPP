@@ -48,7 +48,7 @@ public:
             // we have to free the space other we can simply write top=top->next
             list *temp; // help in freeing the memory
             temp = top;
-            cout << "Remove data is " << temp->data << endl;
+            cout << "Removed data is " << temp->data << endl;
             top = top->next; // poiting to node available below it.
             free(temp);
         }

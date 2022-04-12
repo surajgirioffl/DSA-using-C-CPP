@@ -65,6 +65,7 @@ void push(int *top, biodata *stack)
         (*top)++;
         puts("write name:");
         gets(stack[*top].name);
+        // gets((stack + (*top))->name);//we can also use it
         printf("write class of %s:\n", stack[*top].name);
         gets(stack[*top].class);
         printf("write total marks of %s:\n", stack[*top].name);

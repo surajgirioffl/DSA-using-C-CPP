@@ -66,7 +66,10 @@ void deleteNodeAtEnd();
 void deleteAtBeginning();
 void deleteAtDesiredPosition();
 
+void displayMenu();
 void displayFromBeginning();
+
+void searchDataMenu();
 
 /*-----------definition of functions started---------------*/
 int main()
@@ -114,11 +117,11 @@ int main()
 /*main menu function of insertion Operation in linked list*/
 void insertionOperationMenu()
 {
-    puts("Press 1 for insert node in beginning of linked list.");
+    puts("\nPress 1 for insert node in beginning of linked list.");
     puts("Press 2 for insert node in end of linked list.");
     puts("Press 3 for insert node at/before/after desired node number of linked list.");
     int choice;
-
+    scanf("%d", &choice);
     switch (choice)
     {
     case 1:
@@ -195,9 +198,9 @@ void insertAtDesiredPosition()
     puts("write position or node number to insert a node before or after it.");
     scanf("%d", &position);
 
-    printf("Press 1 for to insert before desired position number or node number %d.", position);
-    printf("Press 2 for to insert after desired position number or node number %d.", position);
-    printf("Press 3 for to insert at desired position number or node number %d.", position);
+    printf("\nPress 1 for to insert before desired position number or node number %d.\n", position);
+    printf("Press 2 for to insert after desired position number or node number %d.\n", position);
+    printf("Press 3 for to insert at desired position number or node number %d.\n", position);
     int choice;
     scanf("%d", &choice);
 
@@ -249,16 +252,16 @@ void insertBeforeDesiredPosition(int position)
     /*above is not required. we will write code of linking only once*/
     if (positionOfStart < position)
     {
-        while (start->next != NULL)
+        while (1)
         {
             start = start->next;
             if (++positionOfStart == position)
                 break;
         }
     }
-    else //(positionOfStart > position)
+    else if (positionOfStart > position)
     {
-        while (start->prv != NULL)
+        while (1)
         {
             start = start->prv;
             if (--positionOfStart == position)
@@ -272,6 +275,8 @@ void insertBeforeDesiredPosition(int position)
     newNode->prv = start->prv;
     start->prv = newNode;
     newNode->next = start;
+    printf("Your inserted node will indexed at position %d\n", position);
+    puts("Insertion before desired node is successful...............");
 }
 
 /*to insert after desired position*/
@@ -279,7 +284,32 @@ void insertAfterDesiredPosition(int position)
 {
     int positionOfStart = currentPositionOfStart();
     labor *newNode = createNode();
-    -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    if (positionOfStart < position)
+    {
+        while (1)
+        {
+            start = start->next;
+            if (++positionOfStart == position)
+                break;
+        }
+    }
+    else if (positionOfStart > position)
+    {
+        while (1)
+        {
+            start = start->prv;
+            if (--positionOfStart == position)
+                break;
+        }
+    }
+
+    // now linking works
+    start->next->prv = newNode;
+    newNode->next = start->next;
+    newNode->prv = start;
+    start->next = newNode;
+    printf("Your inserted node will indexed at position %d\n", position + 1);
+    puts("Insertion after desired node is successful...............");
 }
 
 /*----------------OTHER USED FUNCTIONS--------------------*/
@@ -293,6 +323,7 @@ labor *createNode()
         newNode->next = NULL;
         // taking data from user to store in data part of node
         puts("write name of labor:");
+        fflush(stdin);
         gets(newNode->name);
         printf("write wage of %s.\n", newNode->name);
         scanf("%d", &newNode->wage);
@@ -334,10 +365,12 @@ int currentPositionOfStart()
 /*main menu function of deletion Operation in linked list*/
 void deletionOperationMenu()
 {
-    puts("Press 1 for delete node in beginning of linked list.");
+    puts("\nPress 1 for delete node in beginning of linked list.");
     puts("Press 2 for delete node in end of linked list.");
     puts("Press 3 for delete node at/before/after desired node number of linked list.");
     int choice;
+    scanf("%d", &choice);
+    fflush(stdin);
 
     switch (choice)
     {
@@ -359,19 +392,104 @@ void deletionOperationMenu()
 /*to delete node from end of linked list*/
 void deleteNodeAtEnd()
 {
+    if (top == NULL)
+    {
+        puts("Linked list doesn't exit.");
+        return;
+    }
+    while (start->next != NULL)
+        start = start->next;
+
+    // now deleting
+    start->prv->next = NULL;
+    printf("Last Node (Name = %s & Wage =%d) deleted successfully.........\n\n", start->name, start->wage);
+    free(start);
+    start = top; // now start will not pointing any node of list. So, we have assigned address of 1st node to 'start'. So,It will pointed in list.
 }
 
 /*to delete node from beginning of linked list*/
 void deleteAtBeginning()
 {
+    if (top == NULL)
+    {
+        puts("Linked list doesn't exit.");
+        return;
+    }
+    // start may be anywhere. so we use 'top' here.
+    start = top;
+    // now deleting
+    start->next->prv = NULL;
+    printf("First Node (Name = %s & Wage =%d) deleted successfully.........\n\n", top->name, top->wage);
+    top = top->next; // or start->next
+    free(start);
+    start = top; // now start will not pointing any node of list. So, we have assigned address of 1st node to 'start'. So,It will pointed in list.
 }
 
 /*to delete node at user's desired position*/
 void deleteAtDesiredPosition()
 {
+    int userNode;
+    puts("\nwrite the node number to delete:");
+    scanf("%d", userNode);
+    fflush(stdin);
+
+    int totalNodes = totalNodeInList();
+    if (userNode > totalNodes || userNode < 1)
+    {
+        printf("Invalid node number entered........\n");
+        return;
+    }
+    int positionOfStart = currentPositionOfStart();
+
+    if (positionOfStart > userNode)
+    {
+        while (1)
+        {
+            start = start->prv;
+            if (--positionOfStart == userNode)
+                break;
+        }
+    }
+    else if (positionOfStart < userNode)
+    {
+        while (1)
+        {
+            start = start->next;
+            if (++positionOfStart == userNode)
+                break;
+        }
+    }
+
+    // linking then deleting
+    start->prv->next = start->next;
+    printf("Node number %d (Name = %s & Wage =%d) deleted successfully.........\n\n", userNode, start->name, start->wage);
+    free(start);
+    start = top; // now start will not pointing any node of list. So, we have assigned address of 1st node to 'start'. So,It will pointed in list.
 }
 
 /*----------------DISPLAY OPERATIONS--------------------*/
+/*to display the menu of displaying the linked list */
+void displayMenu()
+{
+    puts("\nPress 1 to display from beginning.");
+    puts("Press 2 transverse the list from end.");
+    int choice;
+    scanf("%d", &choice);
+    fflush(stdin);
+
+    switch (choice)
+    {
+    case 1:
+        displayFromBeginning();
+        break;
+    case 2:
+        break;
+    default:
+        puts("wrong choice selected.");
+        break;
+    }
+}
+
 /*To display the existing from the beginning of the list*/
 void displayFromBeginning()
 {
@@ -384,11 +502,17 @@ void displayFromBeginning()
         // we will not shift the position of start.
         // so we will take another variable to store start
         labor *temp = top;   // because we want to print from beginning
+        int counter = 0;     // for counter the node number in printing
         while (temp != NULL) // temp->prv!=NULL will not work for 1st node
         {
+            printf("\n=============Node Number %d============\n", ++counter);
             printf("-> %d %s\n", temp->wage, temp->name);
             temp = temp->next;
         }
         printf("\n");
     }
 }
+
+/*-----------------SEARCH OPERATIONS--------------------*/
+/* to search the data from linked list*/
+void searchDataMenu() {}
