@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "conio.h": "c",
-        "iostream": "cpp",
-        "ostream": "cpp",
-        "stdio.h": "c"
-    }
-}
