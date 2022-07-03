@@ -8,6 +8,7 @@
 #include <iostream>
 #include <stdlib.h>
 using namespace std;
+bool isArraySorted(int *array, int length);
 
 class heapSortClass
 {
@@ -29,7 +30,7 @@ public:
         array = (int *)calloc(sizeOfArray + 1, sizeof(int)); //+1 because here we will start array from index 1. 4 bytes of memory will be lost. We will think on it later.
         inputArray();
         /*first we need to create a heap of the array*/
-        /*we will use buttom-up approach to arrange the heap from scratch*/
+        /*we will use bottom-up approach to arrange the heap from scratch*/
         for (int lastParentIndex = sizeOfArray / 2; lastParentIndex >= 1; lastParentIndex--)
             arrangeInHeap(lastParentIndex);
 
@@ -40,6 +41,10 @@ public:
             array[sizeOfArray + 1] = root; // assigning the max element in last of array (we have decreased it by 1 in deleteRoot() function. so, here we assinging after increasing by 1)
         }
         display();
+        if (isArraySorted(array, max + 1))
+            cout << "\n\033[1;32mSORTED\033[0m" << endl;
+        else
+            cout << "\n\033[1;31mNOT SORTED\033[0m" << endl;
         return true;
     }
     /*constructor*/
@@ -97,7 +102,7 @@ void heapSortClass::arrangeInHeap(int parentIndex)
     }
     if (leftChildIndex == parentIndex && array[leftChildIndex] > array[parentIndex]) // In last level at last position if only left child exist
     {
-        /*swaping*/
+        /*swapping*/
         int temp = array[leftChildIndex];
         array[leftChildIndex] = array[parentIndex];
         array[parentIndex] = temp;
@@ -106,17 +111,20 @@ void heapSortClass::arrangeInHeap(int parentIndex)
 
 void heapSortClass::inputArray()
 {
+    short changer = 4;
     for (int i = 1; i <= sizeOfArray; i++)
     {
-        cout << "write element of index " << i << endl;
-        cin >> array[i];
+        cout << "write element of index " << i << " = ";
+        // cin >> array[i];
+        array[i] = 100 - (i * changer);
+        cout << *(array + i) << endl;
     }
 }
 
 void heapSortClass::display()
 {
     cout << "\nShorted array are following:" << endl;
-    for (int i = 1; i < max; i++)
+    for (int i = 1; i <= max; i++)
         cout << array[i] << " ";
 }
 
@@ -126,4 +134,30 @@ int main()
     heapSortClass obj;
     obj.heapSort();
     return 0;
+}
+
+/*returns true if sorted else returns false;*/
+bool isArraySorted(int *array, int length)
+{
+    bool isSorted = true; // to check that array is already sorted or not
+    // on the basis of insertion sort
+    // let i=0 is already sorted but here in heap sort we deal with array from index 1. So, i=1+1=2;
+    for (int i = 2; i < length; i++)
+    {
+        int minimum = array[i];
+        int j;
+        for (j = i - 1; j >= 1 && array[j] > minimum; j--)
+        {
+            /*compiler will never enter in this block when our data of array will already sorted.*/
+            isSorted = false;
+            array[j + 1] = array[j];
+            // break; // we will break the loop because our problem is solved.
+        }
+        array[j + 1] = minimum;
+        // if (!isSorted)
+        //     break;
+    }
+    if (isSorted) // isSorted will contains 'true' if data is already sorted else false
+        return true;
+    return false; // unsorted
 }
