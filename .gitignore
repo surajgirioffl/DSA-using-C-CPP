@@ -1,4 +1,4 @@
 *.exe
 *.o
 tester.cc
-
+*.ini
