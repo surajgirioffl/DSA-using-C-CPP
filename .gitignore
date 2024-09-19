@@ -2,3 +2,4 @@
 *.o
 tester.cc
 *.ini
+temp/
